@@ -11,15 +11,11 @@ Install with composer:
 Create the following table:
 
 ```sql
-CREATE TABLE IF NOT EXISTS `reset_requests` 
-(
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `reset_requests` (
   `user_id` int(11) NOT NULL,
   `token` varchar(512) NOT NULL,
   `generated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `valid` bit(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `token` (`token`)
+  PRIMARY KEY (`user_id`)
 );
 ```
 
@@ -61,9 +57,9 @@ $pdo = new \PDO("mysql:host=127.0.0.1;dbname=DATABASE_NAME", $user, $password,
 				
 $recovery = new UserAccountRecovery(new Token(), new RequestRepository($pdo), 600);
 
-$token = $_GET["token"] ?? null;
+// [..] gets the token and the user ID
 
-if ($recovery->validateRequest($token))
+if ($recovery->validateRequest($user_id, $token))
 {
     // login the user and force a password change
     // the token will be automatically invalidate

@@ -46,9 +46,9 @@ class RequestRepository implements RequestRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function count($user_id, int $timelimit): int 
+    public function hasPendingRequest($user_id, int $timelimit): bool 
     {
-        $sql = "SELECT count(id) FROM {$this->table} "
+        $sql = "SELECT count(user_id) FROM {$this->table} "
              . "WHERE user_id = :user_id "
              . "AND generated_at > :generated_at";
         
@@ -58,7 +58,7 @@ class RequestRepository implements RequestRepositoryInterface
         
         if ($stmt->execute())
         {
-            return (int) $stmt->fetchColumn(0);
+            return (bool) $stmt->fetchColumn(0);
         }
         
         throw new RequestRepositoryException("Statement execute failed on count");
@@ -67,47 +67,32 @@ class RequestRepository implements RequestRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function delete(int $request_id) : bool
+    public function delete($user_id) : bool
     {
         $sql = "DELETE FROM {$this->table} "
-             . "WHERE id = :request_id ";
+             . "WHERE user_id = :request_id ";
         
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':request_id', $request_id);
+        $stmt->bindValue(':request_id', $user_id);
         
         return $stmt->execute();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function invalidate(int $request_id) : bool
-    {
-        $sql = "UPDATE {$this->table} "
-             . "SET valid = 0 "
-             . "WHERE id = :request_id ";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':request_id', $request_id);
-        
-        return $stmt->execute();
-    }
-
+ 
     /**
      * {@inheritDoc}
      */
     public function save($user_id, string $token) : bool
     {
-        $sql = "INSERT INTO {$this->table} "
-             . "    (user_id, token, generated_at, valid) "
+        $sql = "REPLACE INTO {$this->table} "
+             . "    (user_id, token, generated_at) "
              . "VALUES"
-             . "    (:user_id, :token, :generated_at, :valid) ";
+             . "    (:user_id, :token, :generated_at) ";
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':user_id', $user_id);
         $stmt->bindValue(':token', $token);
         $stmt->bindValue(':generated_at', date('Y-m-d H:i:s'));
-        $stmt->bindValue(':valid', 1);
         
         return $stmt->execute();
     }
@@ -115,14 +100,14 @@ class RequestRepository implements RequestRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function select(string $token, int $timelimit): RequestInterface 
+    public function select($user_id, int $timelimit): RequestInterface 
     {
         $sql = "SELECT * FROM {$this->table} "
-             . "WHERE token = :token "
+             . "WHERE user_id = :token "
              . "AND generated_at > :generated_at";
         
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':token', $token);
+        $stmt->bindValue(':token', $user_id);
         $stmt->bindValue(':generated_at', $this->subSecDate($timelimit));
         
         if ($stmt->execute() === false)

@@ -59,7 +59,7 @@ class UserAccountRecovery
      */
     public function createRequest($user_id) : string
     {
-        if ($this->repo->count($user_id, $this->timelimit) >= 1)
+        if ($this->repo->hasPendingRequest($user_id, $this->timelimit))
         {
             throw new RequestAlreadyExistsException("A reset request for this user already exists");
         }
@@ -69,22 +69,27 @@ class UserAccountRecovery
     }
     
     /**
-     * Validates a request and invalidates it automatically.
+     * Validates a request and deletes it automatically.
      * 
      * Return TRUE if the request is valid
      * 
      * @param string $token
      * @return bool
      */
-    public function validateRequest(string $token) : bool
+    public function validateRequest($user_id, string $token) : bool
     {
         try
         {
-            $request = $this->repo->select($token, $this->timelimit);
-            
-            if ($this->token->compare($token, $request->getToken()) && $request->isValid())
+            if ($this->repo->hasPendingRequest($user_id, $this->timelimit) === false)
             {
-                $this->repo->invalidate($request->getId());
+                return false;
+            }
+            
+            $request = $this->repo->select($user_id, $this->timelimit);
+            
+            if ($this->token->compare($token, $request->getToken()))
+            {
+                $this->repo->delete($user_id);
                 return true;
             }
             

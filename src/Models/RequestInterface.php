@@ -10,12 +10,6 @@ namespace Pollus\UserAccountRecovery\Models;
 
 interface RequestInterface 
 {
-    /**
-     * Returns the request ID
-     * 
-     * @return int
-     */
-    public function getId() : int;
     
     /**
      * Returns the request token
@@ -24,12 +18,6 @@ interface RequestInterface
      */
     public function getToken() : string;
     
-    /**
-     * Returns TRUE if the request is valid
-     * 
-     * @return bool
-     */
-    public function isValid() : bool;
     
     /**
      * Returns token's generated date

@@ -16,46 +16,37 @@ interface RequestRepositoryInterface
     /**
      * Creates a new reset request
      * 
-     * @param type $user_id
+     * @param mixed $user_id
      * @param string $token
      * return @bool
      */
     public function save($user_id, string $token) : bool;
     
     /**
-     * Invalidates a token
-     * 
-     * @param int $request_id
-     * @return bool
-     */
-    public function invalidate(int $request_id) : bool;
-    
-    /**
-     * Counts how many requests a user has generated within the last amount of
-     * seconds specified by the "timelimit"
+     * Checks if the user have an pending request
      * 
      * @param type $user_id
      * @param int $timelimit
      * @return int
      * @throws RequestRepositoryException
      */
-    public function count($user_id, int $timelimit) : int;
+    public function hasPendingRequest($user_id, int $timelimit) : bool;
     
     /**
-     * Selects a request by its token
+     * Selects a request by its user ID
      * 
-     * @param string $token
+     * @param mixed $user_id
      * @param int $timelimit
      * @throws RequestRepositoryException
      * @return RequestInterface
      */
-    public function select(string $token, int $timelimit) : RequestInterface;
+    public function select($user_id, int $timelimit) : RequestInterface;
     
     /**
-     * Deletes a request by its ID
+     * Deletes a request by its user ID
      * 
-     * @param int $request_id
+     * @param mixed $user_id
      * @return bool
      */
-    public function delete(int $request_id) : bool;
+    public function delete($user_id) : bool;
 }

@@ -19,8 +19,8 @@ class UserAccountRecoveryTest extends TestCase
         $pdo = Connection::get();
         $recovery = new UserAccountRecovery(new Token(), new RequestRepository($pdo), 600);
         $token = $recovery->createRequest(1);
-        $this->assertSame(true, $recovery->validateRequest($token));
-        $this->assertSame(false, $recovery->validateRequest($token));
+        $this->assertSame(true, $recovery->validateRequest(1, $token));
+        $this->assertSame(false, $recovery->validateRequest(1, $token));
     }
     
     public function testDuplicateTokenException()

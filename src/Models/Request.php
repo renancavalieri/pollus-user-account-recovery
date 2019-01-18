@@ -12,20 +12,10 @@ use Pollus\UserAccountRecovery\Models\RequestInterface;
 
 class Request implements RequestInterface
 {
-    protected $id;
     protected $user_id;
     protected $token;
     protected $generated_at;
-    protected $valid;
     
-    /**
-     * {@inheritDoc}
-     */
-    public function getId() : int
-    {
-        return $this->id;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -48,13 +38,5 @@ class Request implements RequestInterface
     public function getUserId() 
     {
         return $this->user_id;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isValid(): bool 
-    {
-        return (bool) $this->valid;
     }
 }
