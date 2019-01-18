@@ -1,0 +1,29 @@
+{
+    "name": "pollus/user-account-recovery",
+    "description": "Account recovery library for Pollus Framework",
+    "keywords": ["php", "account", "recovery"],
+    "license": "MIT",
+    "authors": 
+    [
+        {
+            "name": "Renan Cavalieri",
+            "email": "renan@tecdicas.com"
+        }
+    ],
+    "type": "library",
+    "require": 
+    {
+        "php": ">=7.2"
+    },
+    "require-dev":
+    {
+        "phpunit/phpunit": "^7.0.0"
+    },
+    "autoload": 
+    {
+        "psr-4": 
+        {
+            "Pollus\\UserAccountRecovery\\": "src/"
+        }
+    }
+}
